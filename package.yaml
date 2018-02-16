@@ -1,0 +1,25 @@
+name:                yampa-vty
+version:             0.1.0.0
+#synopsis:
+#description:
+homepage:            https://github.com/Simre1/yampa-vty#readme
+license:             MIT
+author:              Simre1
+maintainer:          simre4775@gmail.com
+copyright:           2018 Simre1
+category:            FRP, Terminal
+extra-source-files:
+- README.md
+
+dependencies:
+  - base >= 4.7 && < 5
+  - vty
+  - Yampa
+  - microlens-platform
+  - time
+
+executables:
+  yampa-vty:
+    source-dirs:      src
+    main: Main.hs 
+    ghc-options: [-threaded]
