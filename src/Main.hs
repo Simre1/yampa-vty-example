@@ -10,9 +10,12 @@ import Control.Concurrent
 import Data.Time.Clock
 import Control.Monad
 
-import AppInput
-import AppState
+import AppInput (onEventInput, emptyAppInput, AppInput)
+import AppState (shouldExit, renderAppState, AppState)
 import MainSF (mainSF)
+
+-- Set the minimal FPS. The view will also update when an event happens.
+minimalFPS = 1
 
 main = do
   vty <- mkVty defaultConfig
@@ -28,22 +31,29 @@ renderOutput :: Vty -> Bool -> AppState -> IO Bool
 renderOutput vty changed s = do
   when changed $ do
     update vty $ renderAppState s
-  return (shouldQuit s)
+  return (shouldExit s)
 
 -- The View will update when an event happens or when the maximumWaitTime (currently 1s) is reached
 senseInput :: Vty -> MVar UTCTime -> Bool -> IO (Double, Maybe (Y.Event Event))
 senseInput vty lastInteraction canBlock = do
-  let maximumWaitTime = 1000000
+
+  let maximumWaitTime = minimalFPS*1000000
+
+  -- Wait for next event
   maybeEvent <- waitFor maximumWaitTime $ nextEvent vty
+
+  -- calculate the time difference between two evaluations
   time <- getCurrentTime
   lastTime <- swapMVar lastInteraction time
   let diff = fromIntegral . fromEnum $ diffUTCTime time lastTime
+  
   return (diff, Y.Event <$> maybeEvent)
 
+-- Uses onEventInput from AppInput.hs to get the new AppInput
 parseInput :: Y.SF (Y.Event Event) AppInput
 parseInput = Y.accumHoldBy onEventInput emptyAppInput
 
--- Wait for a given time for an IO action to finish, giving Nothing back if it does not complete.
+-- Wait for a given time for an IO action to finish, giving Nothing back if it does not complete in time.
 waitFor :: Int -> IO a -> IO (Maybe a)
 waitFor delay action = do
     done <- newEmptyMVar

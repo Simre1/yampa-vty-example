@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 45919cbccb8e439e7d5730fe2bf13f6199baa514e46f201a82d33d232d3bfea5
+-- hash: 87606ce7eb1b4ebad16ce6daeebb4f072b67c0fb6b560f2a396e71098bc84b18
 
 name:           yampa-vty
 version:        0.1.0.0
@@ -32,7 +32,6 @@ executable yampa-vty
   build-depends:
       Yampa
     , base >=4.7 && <5
-    , microlens-platform
     , time
     , vty
   default-language: Haskell2010
