@@ -13,7 +13,6 @@ import Control.Monad
 import AppInput
 import AppState
 import MainSF (mainSF)
-import Lens.Micro.Platform
 
 main = do
   vty <- mkVty defaultConfig
@@ -28,14 +27,14 @@ main = do
 renderOutput :: Vty -> Bool -> AppState -> IO Bool
 renderOutput vty changed s = do
   when changed $ do
-    update vty $ snd $ renderAppState s
+    update vty $ renderAppState s
   return (shouldQuit s)
 
-
+-- The View will update when an event happens or when the maximumWaitTime (currently 1s) is reached
 senseInput :: Vty -> MVar UTCTime -> Bool -> IO (Double, Maybe (Y.Event Event))
 senseInput vty lastInteraction canBlock = do
-  let cycleTime = 1000000
-  maybeEvent <- waitFor cycleTime $ nextEvent vty
+  let maximumWaitTime = 1000000
+  maybeEvent <- waitFor maximumWaitTime $ nextEvent vty
   time <- getCurrentTime
   lastTime <- swapMVar lastInteraction time
   let diff = fromIntegral . fromEnum $ diffUTCTime time lastTime
@@ -44,6 +43,7 @@ senseInput vty lastInteraction canBlock = do
 parseInput :: Y.SF (Y.Event Event) AppInput
 parseInput = Y.accumHoldBy onEventInput emptyAppInput
 
+-- Wait for a given time for an IO action to finish, giving Nothing back if it does not complete.
 waitFor :: Int -> IO a -> IO (Maybe a)
 waitFor delay action = do
     done <- newEmptyMVar

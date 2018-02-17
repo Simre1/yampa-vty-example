@@ -9,9 +9,11 @@ import qualified Graphics.Vty.Input as I
 import AppInput
 import AppState
 
-
 mainSF :: SF AppInput AppState
 mainSF = proc input -> do
+
+  -- The event, when '#' is pressed
   keyEvent <- tagWith () ^<< filterE (==I.KChar '#') ^<< anyKeyEvent -< input
+
   let shouldQuit = isEvent keyEvent
   returnA -< AppState "Hello World" shouldQuit
