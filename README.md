@@ -7,4 +7,4 @@ An example how to use yampa with vty.
 
 **MainSF:** The main signal function with the type signature **SF AppInput AppState**.
 
-**Main.hs:** Glue Yampa and vty together and set minimal FPS.
+**Main.hs:** Glue code for yampa and vty. Sets minimal FPS.

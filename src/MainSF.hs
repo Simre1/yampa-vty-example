@@ -9,6 +9,8 @@ import qualified Graphics.Vty.Input as I
 import AppInput
 import AppState
 
+-- Main signal function
+
 mainSF :: SF AppInput AppState
 mainSF = proc input -> do
 
